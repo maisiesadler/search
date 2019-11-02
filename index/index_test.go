@@ -15,6 +15,13 @@ func TestAddToIndex(t *testing.T) {
 
 	tokens <- word
 
+	result := findAndAssertOneResult(t, idx, word)
+
+	assertCountForDocID(t, result, docID, 1)
+}
+
+func findAndAssertOneResult(t *testing.T, idx Index, word string) *Result {
+
 	found, results := idx.Find(word)
 
 	if !found {
@@ -36,8 +43,12 @@ func TestAddToIndex(t *testing.T) {
 		t.Error("Unexpected number of matches returned by index")
 	}
 
+	return result
+}
+
+func assertCountForDocID(t *testing.T, result *Result, docID string, expectedCount int) {
 	if docresult, ok := result.Matches[docID]; ok {
-		if docresult != 1 {
+		if docresult != expectedCount {
 			t.Error("Unexpected number of matches for doc in Result")
 		}
 	} else {
