@@ -20,8 +20,11 @@ func TestAddToIndex(t *testing.T) {
 	assertCountForDocID(t, result, docID, 1)
 }
 
-func findAndAssertOneResult(t *testing.T, idx Index, word string) *Result {
+func findAndAssertOneResult(t *testing.T, idx Index, searchterm string) *Result {
+	return findAndAssertSearchTermForOneResult(t, idx, searchterm, searchterm)
+}
 
+func findAndAssertSearchTermForOneResult(t *testing.T, idx Index, searchterm string, word string) *Result {
 	found, results := idx.Find(word)
 
 	if !found {

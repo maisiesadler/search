@@ -27,3 +27,5 @@ Find will process the query into 3-grams in the same way as when indexing the to
 For each kgram, we then look in the kgram index to find any matching documentIDs.
 We then look to find any documentIDs that appear as a match for each kgram.
 If there are any matches, we look them up in the dictionary of documentIDs to tokens. If it is indeed a match, we return the documentID-count result.
+
+The kgram index allows for wildcard searches, it will process the word into kgrams around the wildcard and search for those. For example a search for `in*x` will create kgrams `$in` and `x$i`. The term `index` would appear in the results for the kgram search and be returned as a match.
