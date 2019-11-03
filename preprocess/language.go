@@ -5,9 +5,9 @@ import (
 	"strings"
 )
 
-var langRegA, _ = regexp.Compile("àä")
-var langRegE, _ = regexp.Compile("ëé")
-var langRegO, _ = regexp.Compile("ô")
+var langRegA, _ = regexp.Compile("[àä]")
+var langRegE, _ = regexp.Compile("[ëéé]")
+var langRegO, _ = regexp.Compile("[ô]")
 
 func language(ch <-chan string) <-chan string {
 	out := make(chan string)

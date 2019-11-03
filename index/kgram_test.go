@@ -19,7 +19,6 @@ func TestKGram_DoesNotMatch_CantFind(t *testing.T) {
 	searchterm := "ello"
 
 	idx := createKgramIndexWithOneWord(docID, word)
-	idx.PrintInfo()
 
 	found, _ := idx.Find(searchterm)
 
@@ -44,11 +43,12 @@ func createKgramIndexWithOneWord(docID string, word string) *kgramIndex {
 	idx := createKgramIndex()
 
 	tokens := make(chan string)
-	defer close(tokens)
+	go func() {
+		defer close(tokens)
+		tokens <- word
+	}()
 
-	go idx.Add(docID, tokens)
-
-	tokens <- word
+	idx.Add(docID, tokens)
 
 	return idx
 }

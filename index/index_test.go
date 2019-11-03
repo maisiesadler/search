@@ -25,25 +25,25 @@ func findAndAssertOneResult(t *testing.T, idx Index, searchterm string) *Result 
 }
 
 func findAndAssertSearchTermForOneResult(t *testing.T, idx Index, searchterm string, word string) *Result {
-	found, results := idx.Find(word)
+	found, results := idx.Find(searchterm)
 
 	if !found {
-		t.Error("Could not find word in index")
+		t.Errorf("Could not find word '%v' in index", searchterm)
 	}
 
 	if len(results) != 1 {
-		t.Error("Unexpected number of results in index")
+		t.Errorf("Unexpected number of results in index. Expected 1, actual %v.", len(results))
 		t.FailNow()
 	}
 
 	result := results[0]
 
 	if result.Word != word {
-		t.Error("Word returned by index is not expected word")
+		t.Errorf("Word returned by index '%v' is not expected word '%v'.", result.Word, word)
 	}
 
 	if len(result.Matches) != 1 {
-		t.Error("Unexpected number of matches returned by index")
+		t.Errorf("Unexpected number of matches (%v) returned by index", result.Matches)
 	}
 
 	return result

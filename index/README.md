@@ -16,12 +16,12 @@ Find will always have exactly 0 or 1 results in the array.
 
 ## kgram index
 
-The kgram index has an inner dictionary index where the key is the documentID and the value is the token and a count of the number of times that token appears for the documentID.
+The kgram index has an inner dictionary index where the key is the token and the value is the any documentIDs that the token appears in and a count of the number of times that token appears for the documentID.
 It also has a map of kgrams to documentID.
 
-Each token added to the index will be added to the inner dictionary (if it already exists, the documentID-token count will be incremented).
+Each token added to the index will be added to the inner dictionary (if it already exists, the token-documentID count will be incremented).
 The token is then parsed into 3-grams, where we create 3 letter terms for each token. For example the word `index` would have the following 3-gram terms: `$in`, `ind`, `nde`, `dex`, `ex$`, `x$i`.
-For each of these terms, we create a mapping back the documentID in the dictionary.
+For each of these terms we create a mapping back to the token, which can then be used to lookup documentIDs in the dictionary.
 
 Find will process the query into 3-grams in the same way as when indexing the tokens.
 For each kgram, we then look in the kgram index to find any matching documentIDs.
