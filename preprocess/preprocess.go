@@ -2,17 +2,18 @@ package preprocess
 
 // Preprocess takes a channel of string and applies various rules to group tokens
 func Preprocess(ch <-chan string) <-chan string {
-	processed := Lowercase().Process(ch)
-	processed = RemoveShort().Process(processed)
-	processed = Language().Process(processed)
-	processed = Stemming().Process(processed)
-
-	return processed
+	chained := Chained(Lowercase(), RemoveShort(), Language(), Stemming())
+	return chained.Process(ch)
 }
 
 // Preprocessor will apply token normalisation rules
 type Preprocessor interface {
 	Process(ch <-chan string) <-chan string
+}
+
+// Chained creates a preprocessor that applies each processor one by one
+func Chained(preprocessors ...Preprocessor) Preprocessor {
+	return createChainedPreprocessor(preprocessors)
 }
 
 // Language removes accents and diacratics
