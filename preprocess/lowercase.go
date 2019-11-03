@@ -4,7 +4,14 @@ import (
 	"strings"
 )
 
-func lowercase(ch <-chan string) <-chan string {
+type lowercaseProcessor struct {
+}
+
+func createLowercaseProcessor() Preprocessor {
+	return &lowercaseProcessor{}
+}
+
+func (l *lowercaseProcessor) Process(ch <-chan string) <-chan string {
 	out := make(chan string)
 
 	go func() {

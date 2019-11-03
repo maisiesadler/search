@@ -9,7 +9,14 @@ import (
 
 var stemmingReg, _ = regexp.Compile("(\\w+)(ate|ating|ates|ation|ative|atives|ational)\\b")
 
-func stemming(ch <-chan string) <-chan string {
+type stemmingProcessor struct {
+}
+
+func createStemmingProcessor() Preprocessor {
+	return &stemmingProcessor{}
+}
+
+func (p *stemmingProcessor) Process(ch <-chan string) <-chan string {
 	out := make(chan string)
 
 	go func() {

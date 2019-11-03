@@ -5,11 +5,18 @@ import (
 	"strings"
 )
 
+type languageProcessor struct {
+}
+
+func createLanguageProcessor() Preprocessor {
+	return &languageProcessor{}
+}
+
 var langRegA, _ = regexp.Compile("[àä]")
 var langRegE, _ = regexp.Compile("[ëéé]")
 var langRegO, _ = regexp.Compile("[ô]")
 
-func language(ch <-chan string) <-chan string {
+func (l *languageProcessor) Process(ch <-chan string) <-chan string {
 	out := make(chan string)
 
 	go func() {

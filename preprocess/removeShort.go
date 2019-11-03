@@ -1,6 +1,13 @@
 package preprocess
 
-func removeShort(ch <-chan string) <-chan string {
+type removeShortProcessor struct {
+}
+
+func createRemoveShortProcessor() Preprocessor {
+	return &removeShortProcessor{}
+}
+
+func (p *removeShortProcessor) Process(ch <-chan string) <-chan string {
 	out := make(chan string)
 
 	go func() {
