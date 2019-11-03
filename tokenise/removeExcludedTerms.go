@@ -2,16 +2,24 @@ package tokenise
 
 import (
 	"regexp"
+	"strings"
 )
 
-var r, _ = regexp.Compile("Jump to navigation|From Wikipedia, the free encyclopedia|Jump to search")
+type removeExcludedTokeniser struct {
+	excludeRegex *regexp.Regexp
+}
 
-func removeExcludedTerms(ch <-chan string) <-chan string {
+func createRemoveExcludedTokeniser(excludePhrases []string) Tokeniser {
+	excludeRegex := regexp.MustCompile(strings.Join(excludePhrases, "|"))
+	return &removeExcludedTokeniser{excludeRegex}
+}
+
+func (t *removeExcludedTokeniser) Tokenise(ch <-chan string) <-chan string {
 	out := make(chan string)
 
 	go func() {
 		for val := range ch {
-			if !r.MatchString(val) {
+			if !t.excludeRegex.MatchString(val) {
 				out <- val
 			}
 		}

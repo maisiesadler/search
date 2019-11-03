@@ -4,7 +4,14 @@ import (
 	"strings"
 )
 
-func removeHTML(ch <-chan string) <-chan string {
+type removeHTMLTokeniser struct {
+}
+
+func createRemoveHTMLTokeniser() Tokeniser {
+	return &removeHTMLTokeniser{}
+}
+
+func (t *removeHTMLTokeniser) Tokenise(ch <-chan string) <-chan string {
 	out := make(chan string)
 
 	go func() {

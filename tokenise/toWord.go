@@ -9,7 +9,14 @@ var charsToRemoveReg, _ = regexp.Compile("\\[\\d+\\]|[();:.,'\"^\\[\\]]")
 var charsToWhitespaceReg, _ = regexp.Compile("[-]")
 var onlyNumberReg, _ = regexp.Compile("^\\d+\\.?\\d*$")
 
-func toWords(ch <-chan string) <-chan string {
+type toWordTokeniser struct {
+}
+
+func createToWordTokeniser() Tokeniser {
+	return &toWordTokeniser{}
+}
+
+func (t *toWordTokeniser) Tokenise(ch <-chan string) <-chan string {
 	out := make(chan string)
 
 	go func() {
