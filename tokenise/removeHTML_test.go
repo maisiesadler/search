@@ -1,8 +1,9 @@
 package tokenise_test
 
 import (
-	"search/tokenise"
 	"testing"
+
+	"github.com/maisiesadler/search/tokenise"
 )
 
 func TestRemoveHTML(t *testing.T) {

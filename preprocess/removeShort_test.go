@@ -1,7 +1,7 @@
 package preprocess_test
 
 import (
-	"search/preprocess"
+	"github.com/maisiesadler/search/preprocess"
 	"testing"
 )
 

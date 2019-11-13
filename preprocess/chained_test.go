@@ -1,8 +1,9 @@
 package preprocess_test
 
 import (
-	"search/preprocess"
 	"testing"
+
+	"github.com/maisiesadler/search/preprocess"
 )
 
 func TestChainedAppliesFunctionsInOrder(t *testing.T) {

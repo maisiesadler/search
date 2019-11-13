@@ -1,7 +1,7 @@
 package tokenise_test
 
 import (
-	"search/tokenise"
+	"github.com/maisiesadler/search/tokenise"
 	"testing"
 )
 
