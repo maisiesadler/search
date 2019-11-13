@@ -1,8 +1,9 @@
 package preprocess_test
 
 import (
-	"github.com/maisiesadler/search/preprocess"
 	"testing"
+
+	"github.com/maisiesadler/search/preprocess"
 )
 
 func TestLanguageRemovesAccents(t *testing.T) {

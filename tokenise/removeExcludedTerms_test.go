@@ -1,8 +1,9 @@
 package tokenise_test
 
 import (
-	"github.com/maisiesadler/search/tokenise"
 	"testing"
+
+	"github.com/maisiesadler/search/tokenise"
 )
 
 func TestRemoveExcludedTerms(t *testing.T) {
