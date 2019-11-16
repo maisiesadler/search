@@ -11,13 +11,13 @@ import (
 // referenced by the "myRoleARN" ARN.
 // creds := stscreds.NewCredentials(sess, "Dynamo")
 
-type dynamoIndex struct {
+type dynamoDictionary struct {
 	svc       *dynamodb.DynamoDB
 	tableName *string
 }
 
-// CreateDynamoIndex connects to dynamo and returns an instance of dynamoIndex
-func CreateDynamoIndex() (index.Index, error) {
+// CreateDynamoDictionary connects to dynamo and returns an instance of dynamoIndex
+func CreateDynamoDictionary() (index.Dictionary, error) {
 
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
@@ -29,5 +29,5 @@ func CreateDynamoIndex() (index.Index, error) {
 	tableName := "Cache"
 	createCacheIfDoesNotExist(svc, tableName)
 
-	return &dynamoIndex{svc, &tableName}, nil
+	return &dynamoDictionary{svc, &tableName}, nil
 }

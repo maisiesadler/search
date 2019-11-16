@@ -6,7 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
-func (di *dynamoIndex) Add(key string, value string) {
+func (di *dynamoDictionary) Add(key string, value string) {
 	tableName := "Cache"
 
 	item := make(map[string]*dynamodb.AttributeValue)

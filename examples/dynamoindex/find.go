@@ -8,7 +8,7 @@ import (
 	"github.com/maisiesadler/search/index"
 )
 
-func (di *dynamoIndex) Find(key string) (bool, *index.DictionaryResult) {
+func (di *dynamoDictionary) Find(key string) (bool, *index.DictionaryResult) {
 	output, err := di.queryCache(key)
 
 	if err != nil {
@@ -23,7 +23,7 @@ func (di *dynamoIndex) Find(key string) (bool, *index.DictionaryResult) {
 	return true, parseResults(key, output)
 }
 
-func (di *dynamoIndex) queryCache(word string) (*dynamodb.QueryOutput, error) {
+func (di *dynamoDictionary) queryCache(word string) (*dynamodb.QueryOutput, error) {
 	expressionAttributeNames := make(map[string]*string)
 	expressionAttributeNames["#token"] = aws.String("Token")
 	expressionAttributeValues := make(map[string]*dynamodb.AttributeValue)
