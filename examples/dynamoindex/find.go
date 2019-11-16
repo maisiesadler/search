@@ -8,31 +8,19 @@ import (
 	"github.com/maisiesadler/search/index"
 )
 
-func (di *dynamoIndex) Find(word string) (bool, []*index.Result) {
-	output, err := di.queryCache(word)
+func (di *dynamoIndex) Find(key string) (bool, *index.DictionaryResult) {
+	output, err := di.queryCache(key)
 
 	if err != nil {
 		fmt.Printf("got error %v", err)
-		return false, []*index.Result{}
+		return false, nil
 	}
 
 	if *output.Count == 0 {
-		return false, []*index.Result{}
+		return false, nil
 	}
 
-	results := parseResults(output)
-
-	return true, toArray(results)
-}
-
-func (di *dynamoIndex) FindOne(word string) (bool, *index.Result) {
-	found, results := di.Find(word)
-
-	if found && len(results) > 0 {
-		return true, results[0]
-	}
-
-	return false, nil
+	return true, parseResults(key, output)
 }
 
 func (di *dynamoIndex) queryCache(word string) (*dynamodb.QueryOutput, error) {
@@ -49,33 +37,20 @@ func (di *dynamoIndex) queryCache(word string) (*dynamodb.QueryOutput, error) {
 	return di.svc.Query(queryInput)
 }
 
-func parseResults(output *dynamodb.QueryOutput) (m *map[string]*map[string]int) {
-	results := make(map[string]*map[string]int)
-	getOrAdd := func(token *string) *map[string]int {
-		if result, ok := results[*token]; ok {
-			return result
-		}
-
-		m := make(map[string]int)
-		return &m
+func parseResults(key string, output *dynamodb.QueryOutput) *index.DictionaryResult {
+	result := &index.DictionaryResult{
+		Key:             key,
+		ValueOccurences: make(map[string]int),
 	}
 
 	for _, item := range output.Items {
 		token := item["Token"]
+		if *token.S != key {
+			fmt.Printf("Unexpected token retreived. Expected %v, actual %v.", key, token)
+		}
 		docID := item["DocumentID"]
-		results[*token.S] = getOrAdd(token.S)
-		(*results[*token.S])[*docID.S] = 1 // todo: does this ever need to be > 1
+		result.ValueOccurences[*docID.S] = 1 // todo: does this ever need to be > 1
 	}
 
-	return &results
-}
-
-func toArray(m *map[string]*map[string]int) []*index.Result {
-	s := []*index.Result{}
-	for k, v := range *m {
-		result := &index.Result{Matches: *v, Word: k}
-		s = append(s, result)
-	}
-
-	return s
+	return result
 }

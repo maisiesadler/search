@@ -20,21 +20,21 @@ func createCacheIfDoesNotExist(svc *dynamodb.DynamoDB, tableName string) {
 		input := &dynamodb.CreateTableInput{
 			AttributeDefinitions: []*dynamodb.AttributeDefinition{
 				{
-					AttributeName: aws.String("Token"),
+					AttributeName: aws.String("Key"),
 					AttributeType: aws.String("S"),
 				},
 				{
-					AttributeName: aws.String("DocumentID"),
+					AttributeName: aws.String("Value"),
 					AttributeType: aws.String("S"),
 				},
 			},
 			KeySchema: []*dynamodb.KeySchemaElement{
 				{
-					AttributeName: aws.String("Token"),
+					AttributeName: aws.String("Key"),
 					KeyType:       aws.String("HASH"),
 				},
 				{
-					AttributeName: aws.String("DocumentID"),
+					AttributeName: aws.String("Value"),
 					KeyType:       aws.String("RANGE"),
 				},
 			},

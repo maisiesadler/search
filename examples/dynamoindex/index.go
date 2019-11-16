@@ -31,7 +31,3 @@ func CreateDynamoIndex() (index.Index, error) {
 
 	return &dynamoIndex{svc, &tableName}, nil
 }
-
-func (di *dynamoIndex) PrintInfo() {
-
-}
