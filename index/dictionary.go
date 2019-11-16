@@ -1,48 +1,33 @@
 package index
 
-import (
-	"fmt"
-	"strconv"
-)
-
 type dictionaryIndex struct {
 	tokens map[string]map[string]int
 }
 
-func createDictionaryIndex() Index {
+func createDictionaryIndex() Dictionary {
 	return &dictionaryIndex{tokens: make(map[string]map[string]int)}
 }
 
-func (di *dictionaryIndex) Add(docID string, tokens <-chan string) {
-	for token := range tokens {
-		di.AddOne(docID, token)
+func (di *dictionaryIndex) Add(key string, value string) {
+	if _, ok := di.tokens[key]; !ok {
+		di.tokens[key] = make(map[string]int)
 	}
+	di.tokens[key][value]++
 }
 
-func (di *dictionaryIndex) AddOne(docID string, token string) {
-	if docIDs, ok := di.tokens[token]; !ok {
-		docIDs = make(map[string]int)
-		di.tokens[token] = docIDs
-	}
-	di.tokens[token][docID]++
-}
-
-func (di *dictionaryIndex) Find(word string) (bool, []*Result) {
-	if ok, result := di.FindOne(word); ok {
-		return true, []*Result{result}
+func (di *dictionaryIndex) Find(key string) (bool, *DictionaryResult) {
+	if docIDs, ok := di.tokens[key]; ok {
+		return true, &DictionaryResult{Key: key, ValueOccurences: docIDs}
 	}
 
 	return false, nil
 }
 
-func (di *dictionaryIndex) FindOne(word string) (bool, *Result) {
-	if docIDs, ok := di.tokens[word]; ok {
-		return true, &Result{Word: word, Matches: docIDs}
+func keys(m map[string]int) []*string {
+	keys := []*string{}
+	for k := range m {
+		keys = append(keys, &k)
 	}
 
-	return false, nil
-}
-
-func (di *dictionaryIndex) PrintInfo() {
-	fmt.Println("Keys in index:" + strconv.Itoa(len(di.tokens)))
+	return keys
 }

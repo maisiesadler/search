@@ -13,22 +13,22 @@ type instance struct {
 }
 
 type kgramIndex struct {
-	dictionary Index
+	dictionary Dictionary
 	kgrams     map[string]map[string]bool
 }
 
-func createKgramIndex(index Index) *kgramIndex {
-	return &kgramIndex{kgrams: make(map[string]map[string]bool), dictionary: index}
+func createKgramIndex(dictionary Dictionary) *kgramIndex {
+	return &kgramIndex{kgrams: make(map[string]map[string]bool), dictionary: dictionary}
 }
 
 func (ki *kgramIndex) Add(docID string, tokens <-chan string) {
 	for token := range tokens {
-		ki.AddOne(docID, token)
+		ki.addOne(docID, token)
 	}
 }
 
-func (ki *kgramIndex) AddOne(docID string, token string) {
-	ki.dictionary.AddOne(docID, token)
+func (ki *kgramIndex) addOne(docID string, token string) {
+	ki.dictionary.Add(docID, token)
 	s := "$" + token + "$" + token[:1]
 	for kgram := range createKgrams(s) {
 		if _, ok := ki.kgrams[kgram]; !ok {
@@ -79,23 +79,17 @@ func (ki *kgramIndex) Find(word string) (bool, []*Result) {
 	var finalRes []*Result
 
 	for _, r := range res {
-		if ok, i := ki.dictionary.FindOne(r); ok {
+		if ok, occurences := ki.dictionary.Find(r); ok {
 			// i.Word = r
-			finalRes = append(finalRes, i)
+			result := &Result{
+				Word:    r,
+				Matches: occurences.ValueOccurences,
+			}
+			finalRes = append(finalRes, result)
 		}
 	}
 
 	return true, finalRes
-}
-
-func (ki *kgramIndex) FindOne(word string) (bool, *Result) {
-
-	found, results := ki.Find(word)
-	if found && len(results) > 0 {
-		return true, results[0]
-	}
-
-	return false, nil
 }
 
 func createWildcard(s string) (bool, string) {
