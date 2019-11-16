@@ -8,9 +8,9 @@ func TestDictionary_ExactMatch_CanFind(t *testing.T) {
 
 	idx := createDictionaryIndexWithOneWord(docID, word)
 
-	result := findAndAssertOneResult(t, idx, word)
+	result := findAndAssertDictionaryResult(t, idx, word)
 
-	assertCountForDocID(t, result, docID, 1)
+	assertOccurencesForValue(t, result, docID, 1)
 }
 
 func TestDictionary_DoesNotMatch_CantFind(t *testing.T) {
@@ -27,15 +27,8 @@ func TestDictionary_DoesNotMatch_CantFind(t *testing.T) {
 	}
 }
 
-func createDictionaryIndexWithOneWord(docID string, word string) Index {
+func createDictionaryIndexWithOneWord(docID string, word string) Dictionary {
 	idx := createDictionaryIndex()
-
-	tokens := make(chan string)
-	defer close(tokens)
-
-	go idx.Add(docID, tokens)
-
-	tokens <- word
-
+	idx.Add(docID, word)
 	return idx
 }

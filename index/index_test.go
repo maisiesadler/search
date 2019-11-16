@@ -20,6 +20,17 @@ func TestAddToIndex(t *testing.T) {
 	assertCountForDocID(t, result, docID, 1)
 }
 
+func findAndAssertDictionaryResult(t *testing.T, dict Dictionary, searchterm string) *DictionaryResult {
+	found, result := dict.Find(searchterm)
+
+	if !found {
+		t.Errorf("Could not find word '%v' in dictionary", searchterm)
+		t.FailNow()
+	}
+
+	return result
+}
+
 func findAndAssertOneResult(t *testing.T, idx Index, searchterm string) *Result {
 	return findAndAssertSearchTermForOneResult(t, idx, searchterm, searchterm)
 }
@@ -29,6 +40,7 @@ func findAndAssertSearchTermForOneResult(t *testing.T, idx Index, searchterm str
 
 	if !found {
 		t.Errorf("Could not find word '%v' in index", searchterm)
+		t.FailNow()
 	}
 
 	if len(results) != 1 {
@@ -51,6 +63,16 @@ func findAndAssertSearchTermForOneResult(t *testing.T, idx Index, searchterm str
 
 func assertCountForDocID(t *testing.T, result *Result, docID string, expectedCount int) {
 	if docresult, ok := result.Matches[docID]; ok {
+		if docresult != expectedCount {
+			t.Error("Unexpected number of matches for doc in Result")
+		}
+	} else {
+		t.Error("Expected docID does not appear in Matches")
+	}
+}
+
+func assertOccurencesForValue(t *testing.T, result *DictionaryResult, value string, expectedCount int) {
+	if docresult, ok := result.ValueOccurences[value]; ok {
 		if docresult != expectedCount {
 			t.Error("Unexpected number of matches for doc in Result")
 		}

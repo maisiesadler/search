@@ -1,8 +1,6 @@
 package index
 
 import (
-	"fmt"
-	"strconv"
 	"strings"
 )
 
@@ -14,11 +12,26 @@ type instance struct {
 
 type kgramIndex struct {
 	dictionary Dictionary
-	kgrams     map[string]map[string]bool
+}
+
+func (ki *kgramIndex) addTokenToDocumentID(token string, docID string) {
+	ki.dictionary.Add("-"+token, docID)
+}
+
+func (ki *kgramIndex) findDocumentIDsFromToken(token string) (bool, *DictionaryResult) {
+	return ki.dictionary.Find("-" + token)
+}
+
+func (ki *kgramIndex) addKgram(kgram string, token string) {
+	ki.dictionary.Add("_"+kgram, token)
+}
+
+func (ki *kgramIndex) findTokensFromKgram(kgram string) (bool, *DictionaryResult) {
+	return ki.dictionary.Find("_" + kgram)
 }
 
 func createKgramIndex(dictionary Dictionary) *kgramIndex {
-	return &kgramIndex{kgrams: make(map[string]map[string]bool), dictionary: dictionary}
+	return &kgramIndex{dictionary: dictionary}
 }
 
 func (ki *kgramIndex) Add(docID string, tokens <-chan string) {
@@ -31,10 +44,7 @@ func (ki *kgramIndex) addOne(docID string, token string) {
 	ki.dictionary.Add(docID, token)
 	s := "$" + token + "$" + token[:1]
 	for kgram := range createKgrams(s) {
-		if _, ok := ki.kgrams[kgram]; !ok {
-			ki.kgrams[kgram] = make(map[string]bool)
-		}
-		ki.kgrams[kgram][token] = true
+		ki.addKgram(kgram, token)
 	}
 }
 
@@ -51,7 +61,7 @@ func createKgrams(s string) <-chan string {
 }
 
 func (ki *kgramIndex) Find(word string) (bool, []*Result) {
-	var results []map[string]bool
+	var results []map[string]int
 
 	ok, rotatedWildcard := createWildcard(word)
 	if !ok {
@@ -59,8 +69,8 @@ func (ki *kgramIndex) Find(word string) (bool, []*Result) {
 	}
 
 	for kgram := range createKgrams(rotatedWildcard) {
-		if tokenmap, ok := ki.kgrams[kgram]; ok {
-			results = append(results, tokenmap)
+		if ok, tokens := ki.findTokensFromKgram(kgram); ok {
+			results = append(results, tokens.ValueOccurences)
 		} else {
 			// if any kgrams for word don't exist, does not match
 			return false, nil
@@ -111,7 +121,7 @@ func createWildcard(s string) (bool, string) {
 	return false, ""
 }
 
-func booleanAnd(results []map[string]bool) []string {
+func booleanAnd(results []map[string]int) []string {
 
 	if len(results) == 0 {
 		return []string{}
@@ -145,8 +155,4 @@ func booleanAnd(results []map[string]bool) []string {
 	}
 
 	return s
-}
-
-func (ki *kgramIndex) PrintInfo() {
-	fmt.Println("added " + strconv.Itoa(len(ki.kgrams)) + " kgrams")
 }

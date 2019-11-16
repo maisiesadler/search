@@ -4,7 +4,6 @@ package index
 type Index interface {
 	Add(docID string, tokens <-chan string)
 	Find(word string) (bool, []*Result)
-	PrintInfo()
 }
 
 // Dictionary is an index with a 1-1 mapping between key and value
