@@ -8,11 +8,11 @@ import (
 
 func (di *dynamoIndex) Add(docID string, tokens <-chan string) {
 	for token := range tokens {
-		addOne(di.svc, token, docID)
+		di.AddOne(docID, token)
 	}
 }
 
-func addOne(svc *dynamodb.DynamoDB, token string, docID string) error {
+func (di *dynamoIndex) AddOne(docID string, token string) {
 	tableName := "Cache"
 
 	item := make(map[string]*dynamodb.AttributeValue)
@@ -20,9 +20,8 @@ func addOne(svc *dynamodb.DynamoDB, token string, docID string) error {
 	item["DocumentID"] = &dynamodb.AttributeValue{S: &docID}
 
 	putItem := &dynamodb.PutItemInput{TableName: &tableName, Item: item}
-	_, err := svc.PutItem(putItem)
+	_, err := di.svc.PutItem(putItem)
 	if err != nil {
 		fmt.Printf("got error %v", err)
 	}
-	return err
 }

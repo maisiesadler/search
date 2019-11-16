@@ -25,6 +25,16 @@ func (di *dynamoIndex) Find(word string) (bool, []*index.Result) {
 	return true, toArray(results)
 }
 
+func (di *dynamoIndex) FindOne(word string) (bool, *index.Result) {
+	found, results := di.Find(word)
+
+	if found && len(results) > 0 {
+		return true, results[0]
+	}
+
+	return false, nil
+}
+
 func (di *dynamoIndex) queryCache(word string) (*dynamodb.QueryOutput, error) {
 	expressionAttributeNames := make(map[string]*string)
 	expressionAttributeNames["#token"] = aws.String("Token")
