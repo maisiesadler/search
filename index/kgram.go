@@ -41,7 +41,7 @@ func (ki *kgramIndex) Add(docID string, tokens <-chan string) {
 }
 
 func (ki *kgramIndex) addOne(docID string, token string) {
-	ki.dictionary.Add(docID, token)
+	ki.addTokenToDocumentID(token, docID)
 	s := "$" + token + "$" + token[:1]
 	for kgram := range createKgrams(s) {
 		ki.addKgram(kgram, token)
@@ -88,11 +88,11 @@ func (ki *kgramIndex) Find(word string) (bool, []*Result) {
 
 	var finalRes []*Result
 
-	for _, r := range res {
-		if ok, occurences := ki.dictionary.Find(r); ok {
+	for _, token := range res {
+		if ok, occurences := ki.findDocumentIDsFromToken(token); ok {
 			// i.Word = r
 			result := &Result{
-				Word:    r,
+				Word:    token,
 				Matches: occurences.ValueOccurences,
 			}
 			finalRes = append(finalRes, result)

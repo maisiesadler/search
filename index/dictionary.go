@@ -9,8 +9,9 @@ func createDictionaryIndex() Dictionary {
 }
 
 func (di *dictionaryIndex) Add(key string, value string) {
-	if _, ok := di.tokens[key]; !ok {
-		di.tokens[key] = make(map[string]int)
+	if values, ok := di.tokens[key]; !ok {
+		values = make(map[string]int)
+		di.tokens[key] = values
 	}
 	di.tokens[key][value]++
 }

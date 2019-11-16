@@ -6,7 +6,7 @@ func TestDictionary_ExactMatch_CanFind(t *testing.T) {
 	docID := "123"
 	word := "hello"
 
-	idx := createDictionaryIndexWithOneWord(docID, word)
+	idx := createDictionaryIndexWithOneWord(word, docID)
 
 	result := findAndAssertDictionaryResult(t, idx, word)
 
@@ -18,7 +18,7 @@ func TestDictionary_DoesNotMatch_CantFind(t *testing.T) {
 	word := "hello"
 	searchterm := "nothello"
 
-	idx := createDictionaryIndexWithOneWord(docID, word)
+	idx := createDictionaryIndexWithOneWord(word, docID)
 
 	found, _ := idx.Find(searchterm)
 
