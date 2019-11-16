@@ -27,7 +27,7 @@ func TestDictionary_DoesNotMatch_CantFind(t *testing.T) {
 	}
 }
 
-func createDictionaryIndexWithOneWord(docID string, word string) *dictionaryIndex {
+func createDictionaryIndexWithOneWord(docID string, word string) Index {
 	idx := createDictionaryIndex()
 
 	tokens := make(chan string)

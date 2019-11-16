@@ -9,17 +9,17 @@ type dictionaryIndex struct {
 	tokens map[string]map[string]int
 }
 
-func createDictionaryIndex() *dictionaryIndex {
+func createDictionaryIndex() Index {
 	return &dictionaryIndex{tokens: make(map[string]map[string]int)}
 }
 
 func (di *dictionaryIndex) Add(docID string, tokens <-chan string) {
 	for token := range tokens {
-		di.addone(docID, token)
+		di.AddOne(docID, token)
 	}
 }
 
-func (di *dictionaryIndex) addone(docID string, token string) {
+func (di *dictionaryIndex) AddOne(docID string, token string) {
 	if docIDs, ok := di.tokens[token]; !ok {
 		docIDs = make(map[string]int)
 		di.tokens[token] = docIDs

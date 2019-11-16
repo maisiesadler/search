@@ -39,8 +39,8 @@ func TestKGram_Wildcard_CanFind(t *testing.T) {
 	assertCountForDocID(t, result, docID, 1)
 }
 
-func createKgramIndexWithOneWord(docID string, word string) *kgramIndex {
-	idx := createKgramIndex()
+func createKgramIndexWithOneWord(docID string, word string) Index {
+	idx := Create()
 
 	tokens := make(chan string)
 	go func() {
