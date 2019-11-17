@@ -20,35 +20,35 @@ func (di *dynamoDictionary) Find(key string) (bool, *index.DictionaryResult) {
 		return false, nil
 	}
 
-	return true, parseResults(key, output)
+	return true, di.parseResults(key, output)
 }
 
 func (di *dynamoDictionary) queryCache(word string) (*dynamodb.QueryOutput, error) {
 	expressionAttributeNames := make(map[string]*string)
-	expressionAttributeNames["#token"] = aws.String("Token")
+	expressionAttributeNames["#dictkey"] = di.keyName
 	expressionAttributeValues := make(map[string]*dynamodb.AttributeValue)
-	expressionAttributeValues[":v_Token"] = &dynamodb.AttributeValue{S: &word}
+	expressionAttributeValues[":v_DictKey"] = &dynamodb.AttributeValue{S: &word}
 	queryInput := &dynamodb.QueryInput{
 		TableName:                 di.tableName,
 		ExpressionAttributeValues: expressionAttributeValues,
 		ExpressionAttributeNames:  expressionAttributeNames,
-		KeyConditionExpression:    aws.String("#token = :v_Token"),
+		KeyConditionExpression:    aws.String("#dictkey = :v_DictKey"),
 	}
 	return di.svc.Query(queryInput)
 }
 
-func parseResults(key string, output *dynamodb.QueryOutput) *index.DictionaryResult {
+func (di *dynamoDictionary) parseResults(key string, output *dynamodb.QueryOutput) *index.DictionaryResult {
 	result := &index.DictionaryResult{
 		Key:             key,
 		ValueOccurences: make(map[string]int),
 	}
 
 	for _, item := range output.Items {
-		token := item["Token"]
+		token := item[*di.keyName]
 		if *token.S != key {
 			fmt.Printf("Unexpected token retreived. Expected %v, actual %v.", key, token)
 		}
-		docID := item["DocumentID"]
+		docID := item[*di.valueName]
 		result.ValueOccurences[*docID.S] = 1 // todo: does this ever need to be > 1
 	}
 

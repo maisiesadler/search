@@ -14,6 +14,8 @@ import (
 type dynamoDictionary struct {
 	svc       *dynamodb.DynamoDB
 	tableName *string
+	keyName   *string
+	valueName *string
 }
 
 // CreateDynamoDictionary connects to dynamo and returns an instance of dynamoIndex
@@ -27,7 +29,9 @@ func CreateDynamoDictionary() (index.Dictionary, error) {
 	svc := dynamodb.New(sess)
 
 	tableName := "Cache"
-	createCacheIfDoesNotExist(svc, tableName)
+	keyName := "DictKey"
+	valueName := "DictValue"
+	createCacheIfDoesNotExist(svc, tableName, keyName, valueName)
 
-	return &dynamoDictionary{svc, &tableName}, nil
+	return &dynamoDictionary{svc, &tableName, &keyName, &valueName}, nil
 }

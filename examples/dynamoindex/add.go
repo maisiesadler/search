@@ -7,13 +7,12 @@ import (
 )
 
 func (di *dynamoDictionary) Add(key string, value string) {
-	tableName := "Cache"
 
 	item := make(map[string]*dynamodb.AttributeValue)
-	item["Key"] = &dynamodb.AttributeValue{S: &key}
-	item["Value"] = &dynamodb.AttributeValue{S: &value}
+	item[*di.keyName] = &dynamodb.AttributeValue{S: &key}
+	item[*di.valueName] = &dynamodb.AttributeValue{S: &value}
 
-	putItem := &dynamodb.PutItemInput{TableName: &tableName, Item: item}
+	putItem := &dynamodb.PutItemInput{TableName: di.tableName, Item: item}
 	_, err := di.svc.PutItem(putItem)
 	if err != nil {
 		fmt.Printf("got error %v", err)

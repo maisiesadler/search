@@ -9,7 +9,7 @@ import (
 )
 
 // Create table Cache
-func createCacheIfDoesNotExist(svc *dynamodb.DynamoDB, tableName string) {
+func createCacheIfDoesNotExist(svc *dynamodb.DynamoDB, tableName string, keyName string, valueName string) {
 
 	describeTableInput := &dynamodb.DescribeTableInput{TableName: &tableName}
 	output, err := svc.DescribeTable(describeTableInput)
@@ -20,21 +20,21 @@ func createCacheIfDoesNotExist(svc *dynamodb.DynamoDB, tableName string) {
 		input := &dynamodb.CreateTableInput{
 			AttributeDefinitions: []*dynamodb.AttributeDefinition{
 				{
-					AttributeName: aws.String("Key"),
+					AttributeName: aws.String(keyName),
 					AttributeType: aws.String("S"),
 				},
 				{
-					AttributeName: aws.String("Value"),
+					AttributeName: aws.String(valueName),
 					AttributeType: aws.String("S"),
 				},
 			},
 			KeySchema: []*dynamodb.KeySchemaElement{
 				{
-					AttributeName: aws.String("Key"),
+					AttributeName: aws.String(keyName),
 					KeyType:       aws.String("HASH"),
 				},
 				{
-					AttributeName: aws.String("Value"),
+					AttributeName: aws.String(valueName),
 					KeyType:       aws.String("RANGE"),
 				},
 			},
