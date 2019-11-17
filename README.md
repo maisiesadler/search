@@ -23,7 +23,7 @@ When the index is queried by a term it returns a list of documentIDs containing 
 ### To Add
 
 ```
-idx, _ := CreateDynamoIndex()
+idx, _ := CreateIndex()
 tokens := make(chan string)
 go func() {
     defer close(tokens)
