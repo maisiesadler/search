@@ -1,14 +1,14 @@
 package index
 
-type dictionaryIndex struct {
+type dictionary struct {
 	tokens map[string]map[string]int
 }
 
 func createDictionaryIndex() Dictionary {
-	return &dictionaryIndex{tokens: make(map[string]map[string]int)}
+	return &dictionary{tokens: make(map[string]map[string]int)}
 }
 
-func (di *dictionaryIndex) Add(key string, value string) {
+func (di *dictionary) Add(key string, value string) {
 	if values, ok := di.tokens[key]; !ok {
 		values = make(map[string]int)
 		di.tokens[key] = values
@@ -16,7 +16,7 @@ func (di *dictionaryIndex) Add(key string, value string) {
 	di.tokens[key][value]++
 }
 
-func (di *dictionaryIndex) Find(key string) (bool, *DictionaryResult) {
+func (di *dictionary) Find(key string) (bool, *DictionaryResult) {
 	if docIDs, ok := di.tokens[key]; ok {
 		return true, &DictionaryResult{Key: key, ValueOccurences: docIDs}
 	}

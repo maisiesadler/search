@@ -34,3 +34,8 @@ func Create() Index {
 func CreateKgramFromIndex(dictionary Dictionary) Index {
 	return createKgramIndex(dictionary)
 }
+
+// CreateIndexFromDictionary returns an Index backed by the provided Dictionary with no extra functionality
+func CreateIndexFromDictionary(dictionary Dictionary) Index {
+	return createIndexFromDictionary(dictionary)
+}
